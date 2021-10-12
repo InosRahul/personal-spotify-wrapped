@@ -2,10 +2,10 @@
   "name": "spotify-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
     "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-    "server": "nodemon index.js",
+    "server": "cd server && nodemon index.js",
     "client": "cd client && npm run start",
     "postinstall": "cd client && npm install"
   },
