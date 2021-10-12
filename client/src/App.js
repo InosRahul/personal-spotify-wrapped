@@ -1,25 +1,23 @@
 import { useState, useEffect } from 'react';
-import { accessToken, logout, getCurrentUserProfile } from './spotify';
+import { accessToken, getCurrentUserProfile } from './spotify';
 import { catchErrors } from './utils';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useLocation,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import styled from 'styled-components/macro';
+import { GlobalStyle } from './styles';
 
-function ScrollToTop() {
-  const { pathName } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathName]);
-  return null;
-}
+const StyledLoginButton = styled.a`
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  display: inline-block;
+  margin: 20px auto;
+  border-radius: 30px;
+`;
 
 function App() {
   const [token, setToken] = useState(null);
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState(null);
   useEffect(() => {
     setToken(accessToken);
 
@@ -31,14 +29,14 @@ function App() {
   }, []);
   return (
     <div className="App">
+      <GlobalStyle />
       <header className="App-header">
         {!token ? (
-          <a className="App-link" href="http://localhost:8888/login">
+          <StyledLoginButton href="http://localhost:8888/login">
             Log into Spotify
-          </a>
+          </StyledLoginButton>
         ) : (
           <Router>
-            <ScrollToTop />
             <Switch>
               <Route path="/top-artists">
                 <h1>Top Artists</h1>
@@ -54,8 +52,6 @@ function App() {
               </Route>
               <Route path="/">
                 <>
-                  <button onClick={logout}>Log Out</button>
-
                   {profile && (
                     <div>
                       <h1>{profile.display_name}</h1>
