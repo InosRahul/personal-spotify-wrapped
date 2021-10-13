@@ -4,7 +4,7 @@ import { catchErrors } from '../utils';
 import axios from 'axios';
 import { getPlaylistById, getAudioFeaturesForTracks } from '../spotify';
 import { StyledHeader, StyledDropdown } from '../styles';
-import { SectionWrapper, TrackList } from '../components';
+import { SectionWrapper, TrackList, Loader } from '../components';
 
 const Playlist = () => {
   const { id } = useParams();
@@ -89,7 +89,7 @@ const Playlist = () => {
 
   return (
     <>
-      {playlist && (
+      {playlist ? (
         <>
           <StyledHeader>
             <div className="header__inner">
@@ -142,6 +142,8 @@ const Playlist = () => {
             </SectionWrapper>
           </main>
         </>
+      ) : (
+        <Loader />
       )}
     </>
   );
