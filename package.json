@@ -12,11 +12,11 @@
   ],
   "scripts": {
     "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-    "server": "cd server && nodemon index.js",
+    "server": "nodemon index.js",
     "client": "cd client && npm run start",
     "postinstall": "cd client && npm install",
-    "heroku-postbuild": "export NPM_CONFIG_PRODUCTION=true; export NODE_ENV=production cd client && npm install && npm run build",
-    "start-server": "cd server && node index.js"
+    "build": "NODE_ENV=production cd client/ && npm install && npm run build",
+    "start-server": "node index.js"
   },
   "keywords": [],
   "author": "",
