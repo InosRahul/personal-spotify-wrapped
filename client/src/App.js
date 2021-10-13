@@ -28,9 +28,9 @@ function App() {
     setToken(accessToken);
   }, []);
   return (
-    <div className="App">
+    <div>
       <GlobalStyle />
-      <header className="App-header">
+      <header>
         {!token ? (
           <Login />
         ) : (
