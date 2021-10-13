@@ -5,6 +5,7 @@ import {
   getCurrentUserPlaylists,
   getTopArtists,
   getTopTracks,
+  getArtistFollowing,
 } from '../spotify';
 import {
   ArtistsGrid,
@@ -17,6 +18,7 @@ import { StyledHeader } from '../styles';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
+  const [following, setFollowing] = useState(null);
   const [playlists, setPlaylists] = useState(null);
   const [topArtists, setTopArtists] = useState(null);
   const [topTracks, setTopTracks] = useState(null);
@@ -34,6 +36,9 @@ const Profile = () => {
 
       const userTopTracks = await getTopTracks();
       setTopTracks(userTopTracks.data);
+
+      const userFollowing = await getArtistFollowing();
+      setFollowing(userFollowing.data);
     };
 
     catchErrors(fetchData());
@@ -65,6 +70,9 @@ const Profile = () => {
                     {profile.followers.total} Follower
                     {profile.followers.total !== 1 ? 's' : ''}
                   </span>
+                  {following && (
+                    <span>{following.artists.items.length} Following</span>
+                  )}
                 </p>
               </div>
             </div>
