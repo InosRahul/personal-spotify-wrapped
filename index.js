@@ -77,15 +77,13 @@ app.get('/callback', (req, res) => {
   })
     .then(response => {
       if (response.status === 200) {
-        console.log(response.data);
         const { refresh_token, access_token, expires_in } = response.data;
-
         const queryParams = new URLSearchParams({
           access_token,
           refresh_token,
           expires_in,
         });
-        console.log('200');
+
         res.redirect(`${FRONTEND_URI}/?${queryParams}`);
       } else {
         res.redirect(`/?${JSON.stringify({ error: 'invalid_token' })}`);
