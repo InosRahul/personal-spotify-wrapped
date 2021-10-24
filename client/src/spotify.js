@@ -36,7 +36,7 @@ const refreshToken = async () => {
     if (
       !LOCALSTORAGE_VALUES.refreshToken ||
       LOCALSTORAGE_VALUES.refreshToken === 'undefined' ||
-      Date.now() - Number(LOCALSTORAGE_VALUES.timestamp) / 1000 < 1000
+      Date.now() - Number(LOCALSTORAGE_VALUES.timeStamp) / 1000 < 1000
     ) {
       console.error('No refresh token available');
       logout();
@@ -51,7 +51,7 @@ const refreshToken = async () => {
       LOCALSTORAGE_KEYS.accessToken,
       data.access_token,
     );
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
+    window.localStorage.setItem(LOCALSTORAGE_KEYS.timeStamp, Date.now());
 
     // Reload the page for localStorage updates to be reflected
     window.location.reload();
