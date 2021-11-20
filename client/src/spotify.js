@@ -7,6 +7,8 @@ const LOCALSTORAGE_KEYS = {
   timeStamp: 'spotify_token_timestamp',
 };
 
+const EXPIRATION_TIME = 3600 * 1000;
+
 const LOCALSTORAGE_VALUES = {
   accessToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.accessToken),
   refreshToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.refreshToken),
@@ -14,47 +16,27 @@ const LOCALSTORAGE_VALUES = {
   timeStamp: window.localStorage.getItem(LOCALSTORAGE_KEYS.timeStamp),
 };
 
-const hasTokenExpired = () => {
-  const { accessToken, timestamp, expireTime } = LOCALSTORAGE_VALUES;
-  if (!accessToken || !timestamp) {
-    return false;
-  }
-  const millisecondsElapsed = Date.now() - Number(timestamp);
-  return millisecondsElapsed / 1000 > Number(expireTime);
-};
-
 export const logout = () => {
   for (const property in LOCALSTORAGE_KEYS) {
     window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
   }
-
-  window.location = window.location.origin;
+  window.location = window.location.reload();
+  return;
 };
 
 const refreshToken = async () => {
   try {
-    if (
-      !LOCALSTORAGE_VALUES.refreshToken ||
-      LOCALSTORAGE_VALUES.refreshToken === 'undefined' ||
-      Date.now() - Number(LOCALSTORAGE_VALUES.timeStamp) / 1000 < 1000
-    ) {
-      console.error('No refresh token available');
-      logout();
-    }
-
     const { data } = await axios.get(
       `/refresh_token?refresh_token=${LOCALSTORAGE_VALUES.refreshToken}`,
     );
-
+    const { access_token } = data;
     // Update localStorage values
-    window.localStorage.setItem(
-      LOCALSTORAGE_KEYS.accessToken,
-      data.access_token,
-    );
+    window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, access_token);
     window.localStorage.setItem(LOCALSTORAGE_KEYS.timeStamp, Date.now());
 
     // Reload the page for localStorage updates to be reflected
     window.location.reload();
+    return;
   } catch (e) {
     console.error(e);
   }
@@ -68,24 +50,16 @@ const getAccessToken = () => {
     [LOCALSTORAGE_KEYS.expireTime]: query.get('expires_in'),
   };
 
-  const hasError = query.get('error');
-
-  if (
-    hasError ||
-    hasTokenExpired() ||
-    LOCALSTORAGE_VALUES.accessToken === 'undefined'
-  ) {
+  if (Date.now() - Number(LOCALSTORAGE_VALUES.timeStamp) > EXPIRATION_TIME) {
+    console.warn('Access token has expired, refreshing...');
     refreshToken();
   }
 
+  const localAccessToken = Number(LOCALSTORAGE_VALUES.accessToken);
   if (
-    LOCALSTORAGE_VALUES.accessToken &&
-    LOCALSTORAGE_VALUES.accessToken !== 'undefined'
+    (!localAccessToken || localAccessToken === 'undefined') &&
+    queryParams[LOCALSTORAGE_KEYS.accessToken]
   ) {
-    return LOCALSTORAGE_VALUES.accessToken;
-  }
-
-  if (queryParams[LOCALSTORAGE_KEYS.accessToken]) {
     for (const property in queryParams) {
       window.localStorage.setItem(property, queryParams[property]);
     }
@@ -95,7 +69,7 @@ const getAccessToken = () => {
     return queryParams[LOCALSTORAGE_KEYS.accessToken];
   }
 
-  return false;
+  return localAccessToken;
 };
 
 export const accessToken = getAccessToken();
