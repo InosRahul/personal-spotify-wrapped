@@ -1,5 +1,6 @@
 import { formatDuration } from '../utils';
 import { StyledTrackList } from '../styles';
+import { Link } from 'react-router-dom';
 
 const TrackList = ({ tracks }) => (
   <>
@@ -15,9 +16,14 @@ const TrackList = ({ tracks }) => (
                 </div>
               )}
               <div className="track__item__name-artist">
-                <div className="track__item__name overflow-ellipsis">
-                  {track.name}
-                </div>
+                <Link
+                  to={{ pathname: track.external_urls.spotify }}
+                  target="_blank"
+                >
+                  <div className="track__item__name overflow-ellipsis">
+                    {track.name}
+                  </div>
+                </Link>
                 <div className="track__item__artist overflow-ellipsis">
                   {track.artists.map((artist, i) => (
                     <span key={i}>
